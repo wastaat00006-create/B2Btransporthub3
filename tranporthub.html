@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industry Export Collaboration Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS STYLES INSIDE HTML --- */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-body: #f1f5f9;
+            --bg-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-dark); height: 100vh; overflow: hidden; }
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- LOGIN PAGE --- */
+        #login-section {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('https://images.unsplash.com/photo-1494412574643-35d324698420?auto=format&fit=crop&q=80') no-repeat center center/cover;
+            position: relative;
+        }
+        .login-overlay { position: absolute; inset: 0; background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(4px); }
+
+        .login-container {
+            position: relative;
+            background: rgba(255,255,255,0.95);
+            padding: 3rem;
+            border-radius: var(--radius);
+            width: 400px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .login-header { margin-bottom: 2rem; color: var(--primary); }
+        .login-header h1 { font-size: 1.8rem; margin: 10px 0 5px; color: var(--text-dark); }
+
+        .input-group {
+            position: relative; margin-bottom: 1.5rem;
+        }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+        .input-group input {
+            width: 100%; padding: 12px 15px 12px 45px;
+            border: 2px solid #e2e8f0; border-radius: 8px;
+            font-size: 1rem; outline: none; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--primary); }
+
+        .btn-login {
+            width: 100%; padding: 12px;
+            background: var(--primary); color: white;
+            border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-login:hover { background: var(--primary-dark); }
+
+        /* --- DASHBOARD LAYOUT --- */
+        .top-nav {
+            background: var(--bg-white); height: 70px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 2rem; box-shadow: var(--shadow-sm); z-index: 10; position: relative;
+        }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .nav-links a {
+            text-decoration: none; color: var(--text-light); margin-left: 2rem;
+            font-weight: 500; transition: 0.2s; cursor: pointer;
+        }
+        .nav-links a:hover, .nav-links a.active-nav { color: var(--primary); }
+        .logout-btn { color: var(--danger) !important; }
+
+        .main-layout { display: flex; height: calc(100vh - 70px); }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px; background: var(--bg-white);
+            padding: 2rem; border-right: 1px solid #e2e8f0;
+            display: flex; flex-direction: column;
+        }
+        .profile-card {
+            text-align: center; margin-bottom: 2rem; padding-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .profile-img {
+            width: 80px; height: 80px; background: #e0f2fe; color: var(--primary);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; margin: 0 auto 10px;
+        }
+        .status-badge {
+            display: inline-block; font-size: 0.75rem; color: var(--success);
+            background: #d1fae5; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+        }
+        .sidebar-menu li {
+            list-style: none; padding: 12px 15px; margin-bottom: 5px;
+            cursor: pointer; border-radius: 8px; color: var(--text-light);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: 0.2s;
+        }
+        .sidebar-menu li:hover { background: #f8fafc; color: var(--primary); }
+        .badge { background: var(--danger); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; }
+
+        /* Main Content */
+        #main-content { flex: 1; padding: 2rem; overflow-y: auto; }
+
+        /* --- MARKETPLACE CARDS --- */
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
+        }
+        .search-wrapper { position: relative; width: 300px; }
+        .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+        .search-wrapper input {
+            width: 100%; padding: 10px 10px 10px 40px; border: 1px solid #e2e8f0; border-radius: 20px; outline: none;
+        }
+
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;
+        }
+
+        .card {
+            background: var(--bg-white); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); overflow: hidden; transition: 0.3s;
+            border: 1px solid #f1f5f9; display: flex; flex-direction: column;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+
+        .card-img {
+            width: 100%; height: 180px; object-fit: cover;
+        }
+        .card-body { padding: 1.5rem; }
+        .card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-dark); }
+        .card-route { font-weight: 600; color: var(--primary); margin-bottom: 1rem; font-size: 0.9rem; }
+        .card-details p { font-size: 0.85rem; color: var(--text-light); margin-bottom: 5px; }
+        .card-details i { width: 20px; text-align: center; margin-right: 5px; }
+
+        .fill-container { margin: 15px 0; }
+        .fill-info { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; font-weight: 600; }
+        .progress-bar-bg { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+        .progress-bar { height: 100%; border-radius: 4px; }
+
+        .btn-collab {
+            width: 100%; padding: 10px; background: var(--text-dark); color: white;
+            border: none; border-radius: 6px; font-weight: 500; cursor: pointer; transition: 0.2s;
+        }
+        .btn-collab:hover { background: var(--primary); }
+
+        /* --- HISTORY TABLE --- */
+        .table-container { background: white; border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f8fafc; color: var(--text-light); font-weight: 600; padding: 15px; text-align: left; }
+        .data-table td { padding: 15px; border-top: 1px solid #f1f5f9; color: var(--text-dark); }
+
+        /* --- PROFIT/LOSS STATS --- */
+        .stats-container { display: flex; gap: 20px; }
+        .stat-card {
+            flex: 1; background: white; padding: 2rem; border-radius: var(--radius);
+            text-align: center; box-shadow: var(--shadow-sm); position: relative;
+            border-top: 4px solid transparent;
+        }
+        .stat-card:nth-child(1) { border-color: var(--danger); }
+        .stat-card:nth-child(2) { border-color: var(--primary); }
+        .stat-card.highlight { border-color: var(--success); background: #f0fdf4; }
+
+        .icon-box {
+            width: 50px; height: 50px; border-radius: 50%; margin: 0 auto 15px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .icon-box.red { background: #fee2e2; color: var(--danger); }
+        .icon-box.blue { background: #e0f2fe; color: var(--primary); }
+        .icon-box.green { background: #dcfce7; color: var(--success); }
+        .stat-card h3 { font-size: 0.9rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card p { font-size: 2.5rem; font-weight: 700; color: var(--text-dark); margin: 10px 0; }
+        .stat-card.highlight p { color: var(--success); }
+        
+        /* About Us Grid */
+        .about-hero { text-align: center; margin-bottom: 2rem; }
+        .about-hero h2 { color: var(--primary); font-size: 2rem; }
+        .about-grid { display: flex; gap: 20px; }
+        .about-card { flex: 1; background: white; padding: 2rem; border-radius: var(--radius); box-shadow: var(--shadow-sm); text-align: center; }
+        .about-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; }
+        .about-card h3 { margin-bottom: 10px; }
+        .about-card p { color: var(--text-light); font-size: 0.9rem; }
+
+        /* --- MODAL & POPUP --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+            display: flex; justify-content: center; align-items: center; z-index: 100;
+        }
+        .modal-content {
+            background: white; padding: 0; width: 450px; border-radius: var(--radius); overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .modal-header { background: var(--primary); padding: 1.5rem; color: white; display: flex; justify-content: space-between; }
+        .close-btn { font-size: 1.5rem; cursor: pointer; color: white; opacity: 0.8; }
+        #modal-details { padding: 1.5rem; }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 5px; }
+        .modal-actions { padding: 1.5rem; background: #f8fafc; display: flex; gap: 10px; }
+        .btn-confirm { flex: 2; background: var(--success); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .btn-cancel { flex: 1; background: var(--danger); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+
+        /* Notification Popup */
+        .popup {
+            position: fixed; top: 80px; right: 20px; width: 320px;
+            background: white; border-radius: var(--radius);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 99; overflow: hidden;
+        }
+        .popup-header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .close-popup { cursor: pointer; font-size: 1.2rem; }
+        #notif-list { padding: 0; max-height: 200px; overflow-y: auto; }
+        #notif-list li { list-style: none; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        #notif-list li.unread { background: #f0f9ff; border-left: 3px solid var(--primary); }
+    </style>
+</head>
+<body>
+
+    <section id="login-section">
+        <div class="login-overlay"></div>
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-ship fa-3x"></i>
+                <h1>Export Hub</h1>
+                <p>Global Logistics Collaboration</p>
+            </div>
+            <form id="login-form">
+                <div class="input-group">
+                    <i class="fas fa-building"></i>
+                    <input type="text" id="company-name" placeholder="Company Name" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-login">Login to Dashboard</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="dashboard-section" class="hidden">
+        
+        <nav class="top-nav">
+            <div class="logo"><i class="fas fa-cubes"></i> ExportHub</div>
+            <div class="nav-links">
+                <a onclick="showSection('marketplace')" class="active-nav">Marketplace</a>
+                <a onclick="showSection('history')">History</a>
+                <a onclick="showSection('about')">About Us</a>
+                <a onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </nav>
+
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="profile-card">
+                    <div class="profile-img">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3 id="display-username">User</h3>
+                    <p class="status-badge">Online</p>
+                </div>
+                <ul class="sidebar-menu">
+                    <li onclick="toggleNotifications()"><i class="fas fa-bell"></i> Notifications <span class="badge">3</span></li>
+                    <li onclick="showSection('profit-loss')"><i class="fas fa-chart-pie"></i> Profit / Loss</li>
+                </ul>
+            </aside>
+
+            <main id="main-content">
+                
+                <div id="view-marketplace" class="fade-in">
+                    <header class="section-header">
+                        <h2>Active Export Listings</h2>
+                        <div class="search-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="search-input" placeholder="Find route (e.g. USA, Germany)..." onkeyup="filterMarketplace()">
+                        </div>
+                    </header>
+                    
+                    <div id="marketplace-grid" class="grid-container">
+                        </div>
+                </div>
+
+                <div id="view-history" class="hidden fade-in">
+                    <h2>Collaboration History</h2>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Partner Industry</th>
+                                    <th>Route</th>
+                                    <th>Product</th>
+                                    <th>Shared Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="view-profit-loss" class="hidden fade-in">
+                    <h2>Financial Analysis</h2>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="icon-box red"><i class="fas fa-money-bill-wave"></i></div>
+                            <h3>Original Cost</h3>
+                            <p id="total-original-cost">$0</p>
+                            <small>Without Collaboration</small>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icon-box blue"><i class="fas fa-handshake"></i></div>
+                            <h3>Shared Cost</h3>
+                            <p id="total-shared-cost">$0</p>
+                            <small>With Collaboration</small>
+                        </div>
+                        <div class="stat-card highlight">
+                            <div class="icon-box green"><i class="fas fa-piggy-bank"></i></div>
+                            <h3>Total Savings</h3>
+                            <p id="total-savings">$0</p>
+                            <small>Net Profit Generated</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-about" class="hidden fade-in">
+                    <div class="about-hero">
+                        <h2>Revolutionizing Logistics</h2>
+                        <p>We connect industries to eliminate empty container space.</p>
+                    </div>
+                    <div class="about-grid">
+                        <div class="about-card">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>The Problem</h3>
+                            <p>Half-filled containers waste millions of dollars and increase carbon footprint.</p>
+                        </div>
+                        <div class="about-card">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Our Solution</h3>
+                            <p>Smart matching of industries with compatible routes to share space.</p>
+                        </div>
+                        <div class="about-card">
+                            <i class="fas fa-leaf"></i>
+                            <h3>Sustainability</h3>
+                            <p>Fewer trips means less fuel consumption and a greener planet.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </section>
+
+    <div id="collab-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Collaboration Request</h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modal-details">
+                </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-confirm" onclick="confirmCollaboration()">Confirm & Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-popup" class="popup hidden">
+        <div class="popup-header">
+            <h3>Notifications</h3>
+            <span class="close-popup" onclick="toggleNotifications()">&times;</span>
+        </div>
+        <ul id="notif-list">
+            <li class="unread">System: Welcome to the Export Hub!</li>
+            </ul>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT LOGIC ---
+        let currentUser = "";
+        let selectedExportId = null;
+
+        // Mock Data for Marketplace (With Images)
+        const marketData = [
+            { 
+                id: 1, 
+                industry: "TextileCorp", 
+                product: "Cotton Fabrics", 
+                from: "Jakarta", 
+                to: "Singapore", 
+                vehicle: "Container 40ft", 
+                fill: 50, 
+                cost: 2000,
+                image: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&q=80"
+            },
+            { 
+                id: 2, 
+                industry: "AutoParts Ltd", 
+                product: "Car Spare Parts", 
+                from: "Bandung", 
+                to: "Malaysia", 
+                vehicle: "Truck Box", 
+                fill: 30, 
+                cost: 1500,
+                image: "https://images.unsplash.com/photo-1486262715619-72a607e342b1?auto=format&fit=crop&q=80"
+            },
+            { 
+                id: 3, 
+                industry: "AgriExport", 
+                product: "Premium Coffee Beans", 
+                from: "Surabaya", 
+                to: "USA", 
+                vehicle: "Container 20ft", 
+                fill: 60, 
+                cost: 5000,
+                image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80"
+            },
+            { 
+                id: 4, 
+                industry: "FurnitureCo", 
+                product: "Teak Wooden Chairs", 
+                from: "Jepara", 
+                to: "Germany", 
+                vehicle: "Container 40ft", 
+                fill: 45, 
+                cost: 4500,
+                image: "https://images.unsplash.com/photo-1538688536322-74227c676418?auto=format&fit=crop&q=80"
+            },
+            { 
+                id: 5, 
+                industry: "TechGlobal", 
+                product: "Electronics Components", 
+                from: "Batam", 
+                to: "Japan", 
+                vehicle: "Air Freight", 
+                fill: 20, 
+                cost: 8000,
+                image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?auto=format&fit=crop&q=80"
+            },
+            { 
+                id: 6, 
+                industry: "CeramicWorld", 
+                product: "Floor Tiles", 
+                from: "Semarang", 
+                to: "Australia", 
+                vehicle: "Container 40ft", 
+                fill: 75, 
+                cost: 3200,
+                image: "https://images.unsplash.com/photo-1620613903080-333e387c331a?auto=format&fit=crop&q=80"
+            }
+        ];
+
+        // --- SECTION 1: LOGIN FLOW ---
+        const loginForm = document.getElementById('login-form');
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop 404/Reload
+            const name = document.getElementById('company-name').value;
+            if(name) {
+                currentUser = name;
+                document.getElementById('display-username').innerText = currentUser;
+                
+                // Switch Views with Fade Effect
+                const loginSection = document.getElementById('login-section');
+                const dashboard = document.getElementById('dashboard-section');
+                
+                loginSection.style.opacity = '0';
+                setTimeout(() => {
+                    loginSection.classList.add('hidden');
+                    dashboard.classList.remove('hidden');
+                    renderMarketplace();
+                    loadHistory();
+                }, 300);
+            }
+        });
+
+        function logout() {
+            location.reload(); 
+        }
+
+        // --- SECTION 3: MARKETPLACE LOGIC ---
+        function renderMarketplace() {
+            const grid = document.getElementById('marketplace-grid');
+            grid.innerHTML = ""; 
+
+            marketData.forEach(item => {
+                const color = item.fill < 50 ? '#ef4444' : (item.fill < 80 ? '#f59e0b' : '#10b981');
+                
+                const card = document.createElement('div');
+                card.className = 'card fade-in';
+                card.innerHTML = `
+                    <img src="${item.image}" alt="${item.product}" class="card-img">
+                    <div class="card-body">
+                        <h3>${item.industry}</h3>
+                        <div class="card-route"><i class="fas fa-map-marker-alt"></i> ${item.from} &rarr; ${item.to}</div>
+                        <div class="card-details">
+                            <p><i class="fas fa-box"></i> ${item.product}</p>
+                            <p><i class="fas fa-truck"></i> ${item.vehicle}</p>
+                            <p><i class="fas fa-tag"></i> Cost: <strong>$${item.cost}</strong></p>
+                        </div>
+                        
+                        <div class="fill-container">
+                            <div class="fill-info">
+                                <span>Current Fill: ${item.fill}%</span>
+                                <span style="color:${color}">${item.fill}%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar" style="width: ${item.fill}%; background-color: ${color}"></div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-collab" onclick="openModal(${item.id})">Request Collaboration</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterMarketplace() {
+            const input = document.getElementById('search-input').value.toLowerCase();
+            const cards = document.getElementsByClassName('card');
+            
+            Array.from(cards).forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(input) ? "flex" : "none";
+            });
+        }
+
+        // --- NAVIGATION LOGIC ---
+        function showSection(sectionName) {
+            const sections = ['marketplace', 'history', 'profit-loss', 'about'];
+            
+            sections.forEach(sec => {
+                document.getElementById(`view-${sec}`).classList.add('hidden');
+            });
+
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-nav'));
+            if(event && event.target) event.target.classList.add('active-nav');
+
+            document.getElementById(`view-${sectionName}`).classList.remove('hidden');
+
+            if(sectionName === 'profit-loss') {
+                calculateProfitLoss();
+            }
+        }
+
+        // --- SECTION 4 & 5: COLLABORATION LOGIC ---
+        const modal = document.getElementById('collab-modal');
+
+        function openModal(id) {
+            selectedExportId = id;
+            const item = marketData.find(d => d.id === id);
+            const sharedCost = item.cost / 2;
+
+            const details = document.getElementById('modal-details');
+            details.innerHTML = `
+                <div class="detail-row"><span>Provider:</span> <strong>${item.industry}</strong></div>
+                <div class="detail-row"><span>Route:</span> <strong>${item.from} &rarr; ${item.to}</strong></div>
+                <div class="detail-row"><span>Available Space:</span> <strong>${100 - item.fill}%</strong></div>
+                <br>
+                <div class="detail-row"><span>Original Cost:</span> <span style="text-decoration: line-through; color: #999;">$${item.cost}</span></div>
+                <div class="detail-row" style="border:none;"><span>Your Share:</span> <strong style="color: var(--success); font-size: 1.2rem;">$${sharedCost}</strong></div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            selectedExportId = null;
+        }
+
+        function confirmCollaboration() {
+            if(!selectedExportId) return;
+
+            const item = marketData.find(d => d.id === selectedExportId);
+            const sharedCost = item.cost / 2;
+            
+            const newRecord = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString(),
+                partner: item.industry,
+                product: item.product,
+                route: `${item.from} -> ${item.to}`,
+                originalCost: item.cost,
+                sharedCost: sharedCost
+            };
+
+            let history = JSON.parse(localStorage.getItem('exportHistory')) || [];
+            history.push(newRecord);
+            localStorage.setItem('exportHistory', JSON.stringify(history));
+
+            closeModal();
+            addNotification(`Success: Export combined with ${item.industry}!`);
+            loadHistory();
+        }
+
+        // --- SECTION 6: HISTORY LOGIC ---
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('exportHistory')) || [];
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = "";
+
+            if(history.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding: 20px;'>No collaborations yet. Start in the Marketplace!</td></tr>";
+                return;
+            }
+
+            history.forEach(rec => {
+                const row = `<tr>
+                    <td>${rec.date}</td>
+                    <td><strong>${rec.partner}</strong></td>
+                    <td>${rec.route}</td>
+                    <td>${rec.product}</td>
+                    <td style="color: var(--success); font-weight: bold;">$${rec.sharedCost}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // --- SECTION 7: PROFIT / LOSS LOGIC ---
+        function calculateProfitLoss() {
+            const history = JSON.parse(localStorage.getItem('exportHistory')) || [];
+            
+            let totalOriginal = 0;
+            let totalShared = 0;
+
+            history.forEach(rec => {
+                totalOriginal += rec.originalCost;
+                totalShared += rec.sharedCost;
+            });
+
+            const savings = totalOriginal - totalShared;
+
+            document.getElementById('total-original-cost').innerText = `$${totalOriginal.toLocaleString()}`;
+            document.getElementById('total-shared-cost').innerText = `$${totalShared.toLocaleString()}`;
+            document.getElementById('total-savings').innerText = `$${savings.toLocaleString()}`;
+        }
+
+        // --- SECTION 8: NOTIFICATIONS ---
+        function toggleNotifications() {
+            const popup = document.getElementById('notification-popup');
+            popup.classList.toggle('hidden');
+        }
+
+        function addNotification(msg) {
+            const list = document.getElementById('notif-list');
+            const li = document.createElement('li');
+            li.className = 'unread';
+            li.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success)"></i> ${msg}`;
+            list.prepend(li);
+            
+            const popup = document.getElementById('notification-popup');
+            popup.classList.remove('hidden');
+            
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 4000);
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            if(localStorage.getItem('exportHistory')) {
+                loadHistory();
+            }
+        };
+    </script>
+</body>
+</html>
